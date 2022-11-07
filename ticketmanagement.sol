@@ -14,12 +14,21 @@ contract TicketManagement is Ticket {
         _;
     }
 
+    /// @title Vérification que le ticket n’est pas encore utilisé
+    /// @author Lucien Cartier-Tilet <lucien@phundrak.com>
+    /// @param ticketId Identifiant du ticket
+    /// @dev Vérifie que le ticket n’est pas utilisé afin de pouvoir appeler une fonction.
+    modifier notUsed(uint _ticketId) {
+        require(tickets[_ticketId].used == false);
+        _;
+    }
+
     /// @title Changement du prix d’un ticket
     /// @author Lucien Cartier-Tilet <lucien@phundrak.com>
     /// @notice Le propriétaire d’un ticket peut choisir de modifier son prix s’il souhaite le revendre par la suite.
     /// @param ticketId Identifiant du ticket dont on souhaite modifier le prix
     /// @param newPrice Nouveau prix du ticket
-    function changePrice(uint _ticketId, uint16 _newPrice) external onlyOwnerOf(_ticketId) {
+    function changePrice(uint _ticketId, uint16 _newPrice) external onlyOwnerOf(_ticketId) notUsed {
         Ticket storage myTicket = tickets[_ticketId];
         myTicket.price = _newPrice;
     }

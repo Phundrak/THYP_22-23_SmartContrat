@@ -45,7 +45,7 @@ contract TicketOwnership is TicketManagement, ERC721 {
     /// @param to Nouveau propriétaire
     /// @param tokenId Identifiant du ticket
     /// @dev Fonction interne, suppose que le transfert a déjà été effectué
-    function _transfer(address _from, address _to, uint256 _tokenId) private {
+    function _transfer(address _from, address _to, uint256 _tokenId) private notUsed {
         ownerTicketCount[_to] = ownerTicketCount[_to].add(1);
         ownerTicketCount[msg.sender] = ownerTicketCount[msg.sender].sub(1);
         ticketToOwner[_tokenId] = _to;
@@ -57,7 +57,7 @@ contract TicketOwnership is TicketManagement, ERC721 {
     /// @param to Personne pouvant acquérir le ticket
     /// @param tokenId Ticket pouvant changer de mains
     /// @notice Seul le propriétaire d’un ticket peut approuver son transfert
-    function approve(address _to, uint256 _tokenId) public onlyOwnerOf(_tokenId) {
+    function approve(address _to, uint256 _tokenId) public notUsed onlyOwnerOf(_tokenId) {
         ticketApprovals[_tokenId] = _to;
         Approvals(msg.sender, _to, _tokenId);
     }
@@ -66,7 +66,7 @@ contract TicketOwnership is TicketManagement, ERC721 {
     /// @author Lucien Cartier-Tilet <lucien@phundrak.com>
     /// @param tokenId Identifiant du ticket pouvant être acheté
     /// @notice Seule une personne ayant été approuvée par le propriétaire du ticket peut l’acheter. Elle doit transférer avec l’appel de cette fonction le prix du ticket.
-    function takeOwnership(uint256 _tokenId) public payable {
+    function takeOwnership(uint256 _tokenId) public payable notUsed {
         require(ticketApprovals[_tokenId] == msg.sender);
         require(msg.value == tickets[_tokenId].price);
         address owner = ownerOf(_tokenId);
@@ -78,7 +78,7 @@ contract TicketOwnership is TicketManagement, ERC721 {
     /// @author Lucien Cartier-Tilet <lucien@phundrak.com>
     /// @param tokenId Identifiant du ticket dont le transfert est annulé
     /// @notice Une annulation de transfert n’est pas payante. Elle retire juste l’opportunité à l’acheteur potentiel de l’acheter.
-    function cancelOwnership(uint256 _tokenId) public onlyOwnerOf(_tokenId) {
+    function cancelOwnership(uint256 _tokenId) public onlyOwnerOf(_tokenId) notUsed {
         require(ticketApprovals[_tokenId] == msg.sender);
         address owner = ownerOf(_tokenId);
         ticketApprovals[_tokenId] = owner;
